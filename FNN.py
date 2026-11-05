@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 
 from model_graph import *
 
-class FNN_weak:
+class FNN:
     def __init__(self, xtrain, ytrain, xval, yval, xtest, ytest):
         self.xtrain = xtrain
         self.ytrain = ytrain
@@ -56,6 +56,8 @@ class FNN_weak:
 
         y_pred_clipped = np.clip(y_pred, 0.0, 1.0)
 
-        print(len(time), len(self.ytest), len(y_pred_clipped))
-        soc_pred_vs_actual(time, self.ytest, y_pred_clipped, "FNN_weak/")
+        soc_pred_vs_actual(time, self.ytest, y_pred_clipped, "FNN/")
+
+    def save(self):
+        self.model.save("output/models/FNN/fnn.keras")
         
