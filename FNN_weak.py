@@ -59,3 +59,5 @@ class FNN_weak:
         print(len(time), len(self.ytest), len(y_pred_clipped))
         soc_pred_vs_actual(time, self.ytest, y_pred_clipped, "FNN_weak/")
         
+    def save(self):
+        self.model.save("output/models/FNN_weak/fnn_weak.keras")

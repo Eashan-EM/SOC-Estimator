@@ -79,5 +79,6 @@ xtest = LC_OCV_008.data[:split_at]
 ytest = LC_OCV_008.soc_charge[:split_at]
 fnn_weak = FNN_weak(xtrain, ytrain, xval, yval, xtest, ytest);
 fnn_weak.train()
+fnn_weak.save()
 fnn_weak.evaluate()
 fnn_weak.predict(LC_OCV_008.time[:split_at])
