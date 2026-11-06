@@ -49,7 +49,7 @@ class FNN:
     def evaluate(self):
       test_loss, test_mae = self.model.evaluate(self.scaler.transform(self.xtest), self.ytest, verbose=0)
 
-      print(f"FNN Weak:\n\tTest Loss: {test_loss}\n\tTest MAE: {test_mae}")
+      print(f"FNN:\n\tTest Loss: {test_loss}\n\tTest MAE: {test_mae}")
 
     def predict(self, time):
         y_pred = self.model.predict(self.scaler.transform(self.xtest))

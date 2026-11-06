@@ -27,7 +27,12 @@ class Battery:
         intern_resistance = []
         delta_v = self.voltage[0]
         delta_i = self.current[0]
+
+        MAX_ELEM_WEIGHT = 100
+        weighted_v = []
+        weighted_i = []
         for i, cur in enumerate(self.current):
+            # Calculate the internal resistance
             delta_v = abs(delta_v-self.voltage[i])
             delta_i = abs(delta_i-self.voltage[i])
             if delta_i==0:
@@ -36,6 +41,10 @@ class Battery:
                 intern_resistance.append(delta_v/delta_i)
             delta_v = self.voltage[i]
             delta_i = self.current[i]
+
+            # Calculate weighted average of voltage and current
+            weighted_v.append(sum(self.voltage[i-MAX_ELEM_WEIGHT if i>MAX_ELEM_WEIGHT else 0:i])/MAX_ELEM_WEIGHT)
+            weighted_i.append(sum(self.current[i-MAX_ELEM_WEIGHT if i>MAX_ELEM_WEIGHT else 0:i])/MAX_ELEM_WEIGHT)
             if cur!=0:
                 blocks = 0
                 start_counting = False
@@ -49,7 +58,9 @@ class Battery:
                     elif self.voltage[i]<self.min_vol:
                         self.min_vol = self.voltage[i]
 
-        self.data = np.column_stack((self.data, np.array(intern_resistance)))
+        #self.data = np.column_stack((self.data, np.array(intern_resistance)))
+        self.data = np.column_stack((self.data, np.array(weighted_v)))
+        self.data = np.column_stack((self.data, np.array(weighted_i)))
         self.data = self.data[self.voltage_index[0]:self.voltage_index[-1]]
         self.time = self.time[self.voltage_index[0]:self.voltage_index[-1]]
 
@@ -82,15 +93,14 @@ LC_OCV_008 = Battery("data/LC-OCV/OCV0-20120618/A1-008-OCV0-20120618.xlsx", "Cha
 LC_OCV_008.print_data();
 #LC_OCV_008.draw_graphs()
 
+split_at = int(len(LC_OCV_008.data)*0.85)
 xtrain = LC_OCV_007.data
 ytrain = LC_OCV_007.soc_charge
-split_at = int(len(LC_OCV_008.data)*0.85)
 xval = LC_OCV_008.data[split_at:]
 yval = LC_OCV_008.soc_charge[split_at:]
 xtest = LC_OCV_008.data[:split_at]
 ytest = LC_OCV_008.soc_charge[:split_at]
 fnn = FNN(xtrain, ytrain, xval, yval, xtest, ytest);
 fnn.train()
-fnn.save()
 fnn.evaluate()
 fnn.predict(LC_OCV_008.time[:split_at])
