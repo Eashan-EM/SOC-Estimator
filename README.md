@@ -41,3 +41,7 @@ Testing: Cell 008 LC-OCV 0 degree dataset; First 85% of samples
 The MAE is `2.6%`
 
 The model is trained well for SOC < 30%. But other than that, it has errors, that is due to the flat curve of the dataset
+
+# Citations
+
+[1] Center for Advanced Life Cycle Engineering (CALCE), "CALCE Battery Data," University of Maryland, College Park, MD, USA. [Online]. Available: https://umd.edu
