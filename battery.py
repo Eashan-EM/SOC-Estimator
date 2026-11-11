@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from battery_graphs import *
+from sklearn.preprocessing import StandardScaler
 
 class A123_Battery:
     # Max capacity for 100% SOH is 1.1Ah
@@ -87,19 +88,23 @@ class A123_Battery:
             for j in range(self.max_min_idx[i], self.max_min_idx[i+1]):
                 # Convert to Ah
                 curr_charge += current[j]*(self.time[j+1]-self.time[j])/3600
-                soc_charge.append(curr_charge/self.current_cap)
+                soc_charge.append(max(0.0, min(1.0, curr_charge/self.current_cap)))
                 #if j>self.max_min_idx[1]-200 and j<self.max_min_idx[1]+100:
                 #    print(curr_charge, current[j], self.time[j+1], self.time[j], soc_charge[-1])
             is_discharging = not is_discharging
             
-        self.soc_charge = soc_charge
+        self.soc_charge = np.reshape(soc_charge, (-1, 1))
         
         self.time = self.time[self.max_min_idx[0]:self.max_min_idx[-1]]
-        self.current = current[self.max_min_idx[0]:self.max_min_idx[-1]]
-        self.voltage = voltage[self.max_min_idx[0]:self.max_min_idx[-1]]
+        self.current = np.reshape(current[self.max_min_idx[0]:self.max_min_idx[-1]], (-1, 1))
+        self.voltage = np.reshape(voltage[self.max_min_idx[0]:self.max_min_idx[-1]], (-1, 1))
         self.intern_resistance = intern_resistance[self.max_min_idx[0]:self.max_min_idx[-1]]
         self.weighted_v = weighted_v[self.max_min_idx[0]:self.max_min_idx[-1]]
         self.weighted_i = weighted_i[self.max_min_idx[0]:self.max_min_idx[-1]]
+
+        scaler = StandardScaler()
+        self.voltage_norm = scaler.fit_transform(self.voltage)
+        self.current_norm = scaler.fit_transform(self.current)
 
     def create_data(self, *args):
         return np.column_stack(args)
