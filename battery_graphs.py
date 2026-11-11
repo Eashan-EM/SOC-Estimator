@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import random
 
 def soc_volt_vs_time(start_idx, end_idx, soc, voltage, time, output_path):
     fig, ax1 = plt.subplots()
@@ -27,3 +28,17 @@ def soc_vs_volt(start_idx, end_idx, soc, voltage, output_path):
 
     plt.savefig(f"output/battery/{output_path}soc_voltage.png")
     plt.close()
+
+def soc_temp_map(time, socs, legends, output_path):
+    for i, soc in enumerate(socs):
+        r = random.randint(0, 255)
+        g = random.randint(0, 255)
+        b = random.randint(0, 255)
+        
+        color = f"#{r:02x}{g:02x}{b:02x}"
+        plt.plot(time, soc, color=color, ls="solid", label=legends[i])
+        plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+        plt.xlabel("Time(S)")
+        plt.ylabel("SOC(%)")
+    plt.tight_layout()
+    plt.savefig(f"output/battery/{output_path}")
